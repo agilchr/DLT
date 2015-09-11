@@ -43,7 +43,18 @@ for i = 1 : numepochs
         
         %Add noise to input (for use in denoising autoencoder)
         if(nn.inputZeroMaskedFraction ~= 0)
-            batch_x = batch_x.*(rand(size(batch_x))>nn.inputZeroMaskedFraction);
+            % This is not implemented correctly
+            % This gives every cell an inputZerpMaskedFraction
+            % chance of being zeroed, not zeroing that fraction of
+            % the cells, randomly distributed
+            %- batch_x = batch_x.*(rand(size(batch_x))>nn.inputZeroMaskedFraction);
+            % Below is the proper implementation
+            num_zeros = floor(numel(batch_x) * nn.inputZeroMaskedFraction);
+            flat_mask = [zeros([1 num_zeros]) ...
+                         ones([1 (numel(batch_x) - num_zeros)])];
+            flat_mask(randperm(numel(flat_mask)));
+            mask = reshape(flat_mask, size(batch_x));
+            batch_x = batch_x .* mask;
         end
         
         batch_y = train_y(kk((l - 1) * batchsize + 1 : l * batchsize), :);
