@@ -49,13 +49,7 @@ function nn = nnff(nn, x, y)
     end
 
     %error and loss
-    switch nn.lossFunction
-      case 'sse'
-        nn.e = y - nn.a{n};
-      case 'crossEnt'
-        crossEnt = @(x,z) x*log(z) + (1-x)*log(1-z);
-        nn.e = bsxfun(crossEnt, y, nn.a{n});
-    end
+    nn.e = y - nn.a{n};        
     
     switch nn.output
       case {'sigm', 'linear'}
@@ -63,7 +57,9 @@ function nn = nnff(nn, x, y)
           case 'sse'
             nn.L = 1/2 * sum(sum(nn.e .^ 2)) / m;
           case 'crossEnt'
-            nn.L = 1/2 * sum(nn.e(:)) / m
+            crossEnt = @(x,z) x.*log(z) + (1-x).*log(1-z);
+            crossEntError = bsxfun(crossEnt, y, nn.a{n});
+            nn.L = sum(crossEntError(:)) / m;
         end
       case 'softmax'
         nn.L = -sum(sum(y .* log(nn.a{n}))) / m;
