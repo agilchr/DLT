@@ -1,3 +1,16 @@
+DLT
+===
+
+This is a fork of the popular Matlab DeepLearningToolbox, the
+originial of which can be found [here] (https://github.com/rasmusbergpalm/DeepLearnToolbox)
+
+Current changes include:
+ *  Improvement of NN to include a cross-entropy loss function and better randomization of masks
+ *  Implementation of a new auto-encoder setup, the Rich Auto-Encoder
+    (RAE), which places multiple denoising auto-encoders of different
+    masking percentages on the same level.
+
+Below is the original README at the time of fork (9/4/2015):
 
 DeepLearnToolbox
 ================
