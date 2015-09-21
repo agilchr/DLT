@@ -31,9 +31,14 @@ function test_DLT_CNN(num_epochs)
     cnn = cnntrain(cnn, train_x, train_y, opts);
 
     [er, bad] = cnntest(cnn, test_x, test_y);
+    
+    % let's look at the cnn
+    cnn
 
     %plot mean squared error
     figure; plot(cnn.rL);
+    
+    fprintf('Testing Error: %4f\n', er);
 
     assert(er<0.12, 'Too big error');
 end
