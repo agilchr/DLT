@@ -32,6 +32,11 @@ function net = cnnff(net, x)
                 z = convn(net.layers{l - 1}.a{j}, ones(net.layers{l}.scale) / (net.layers{l}.scale ^ 2), 'valid');   %  !! replace with variable
                 net.layers{l}.a{j} = z(1 : net.layers{l}.scale : end, 1 : net.layers{l}.scale : end, :);
             end
+        elseif strcmp(net.layers{l}.type, 'r')
+            % relu using max(x, 0)
+            for j = 1 : inputmaps
+                net.layers{l}.a{j} = max(0, net.layers{l-1}.a{j});
+            end
         end
     end
 

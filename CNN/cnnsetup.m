@@ -17,7 +17,15 @@ function net = cnnsetup(net, x, y)
                 net.layers{l}.b{j} = 0;
             end
         end
+        if strcmp(net.layers{l}.type, 'r') % ReLU layer
+            net.layers{l}.scale = 1;
+            net.layers{l}.outputmaps = net.layers{l-1}.outputmaps
+            for j = 1 : inputmaps
+                net.layers{l}.b{j} = 0;
+            end
+        end
         if strcmp(net.layers{l}.type, 'c')
+            net.layers{l}.scale = 1;
             mapsize = mapsize - net.layers{l}.kernelsize + 1;
             fan_out = net.layers{l}.outputmaps * net.layers{l}.kernelsize ^ 2;
             for j = 1 : net.layers{l}.outputmaps  %  output map

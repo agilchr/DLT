@@ -33,7 +33,15 @@ function net = cnnbp(net, y)
                 end
                 net.layers{l}.d{i} = z;
             end
+        elseif strcmp(net.layers{l}.type, 'r')
+            for j = 1 : numel(net.layers{l}.a)
+                net.layers{l}.d{j} = (net.layers{l}.a{j} > 0) .* ...
+                    expand(net.layers{l + 1}.d{j}, ...
+                           [net.layers{l + 1}.scale net.layers{l + 1}.scale 1]) ...
+                    / net.layers{l + 1}.scale ^ 2;
+            end
         end
+        
     end
 
     %%  calc gradients

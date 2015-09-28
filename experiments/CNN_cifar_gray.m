@@ -1,34 +1,23 @@
-function CNN_cifar(num_epochs)
+function CNN_cifar_gray(num_epochs)
     
     if ~exist('num_epochs','var')
         num_epochs = 1;
     end
     
-    if exist('cifar_train_data.mat','file')
-        load('cifar_train_data');
-    else
-        train_x = [];
-        train_y = [];
-        for batch = 1 : 5 % reduce to one batch for quick functional tests
-            fprintf('Converting batch %d\n',batch);
-            load(['data_batch_',num2str(batch)]); % gives us data and labels
-            new_x = reshape(double(data'), 32, 32, 3, size(data,1));
-            train_x = cat(4, train_x, new_x);
-            train_y = cat(2, train_y, convert_labels(labels));
-        end
-        save('cifar_train_data','train_x','train_y');
+    train_x = [];
+    train_y = [];
+    for batch = 1 : 5 % reduce to one batch for quick functional tests
+        fprintf('Converting batch %d\n',batch);
+        load(['data_batch_',num2str(batch)]); % gives us data and labels
+        new_x = reshape(double(data'), 32, 32, 3, size(data,1));
+        train_x = cat(3, train_x, squeeze(mean(new_x,3)));
+        train_y = cat(2, train_y, convert_labels(labels));
     end
-    
-    if exist('cifar_test_data.mat','file')
-        load('cifar_test_data');
-    else
-        fprintf('Converting test batch\n');
-        load('test_batch'); % also gives us data and labels
-        test_x = reshape(data', 32, 32, 3, size(data,1));
-        test_y = convert_labels(labels);
-        save('cifar_test_data', 'test_x', 'test_y');
-    end        
-    
+    fprintf('Converting test batch\n');
+    load('test_batch'); % also gives us data and labels
+    test_x = reshape(data', 32, 32, 3, size(data,1));
+    test_x = squeeze(mean(test_x, 3));
+    test_y = convert_labels(labels);
         
 
     %% ex1 Train a 6c-2s-12c-2s Convolutional neural network 
@@ -38,13 +27,10 @@ function CNN_cifar(num_epochs)
     cnn.layers = {
         struct('type', 'i') %input layer
         struct('type', 'c', 'outputmaps', 6, 'kernelsize', 7) %convolution layer
-        struct('type', 'r')
         struct('type', 's', 'scale', 2) %sub sampling layer
         struct('type', 'c', 'outputmaps', 12, 'kernelsize', 4) %convolution layer
-        struct('type', 'r')
         struct('type', 's', 'scale', 2) %subsampling layer
         struct('type', 'c', 'outputmaps', 6, 'kernelsize', 4) %convolution layer
-        struct('type', 'r')
         struct('type', 's', 'scale', 2) %subsampling layer
                  };
     cnn = cnnsetup(cnn, train_x, train_y);
