@@ -1,8 +1,14 @@
 function net = cnnsetup(net, x, y)
     assert(~isOctave() || compare_versions(OCTAVE_VERSION, '3.8.0', '>='), ['Octave 3.8.0 or greater is required for CNNs as there is a bug in convolution in previous versions. See http://savannah.gnu.org/bugs/?39314. Your version is ' myOctaveVersion]);
-    inputmaps = 1;
-    mapsize = size(squeeze(x(:, :, 1)));
-
+    sx = size(x);
+    if numel(sx) == 3 % black and white images
+        inputmaps = 1;
+        mapsize = size(squeeze(x(:, :, 1)));        
+    else % color images
+        inputmaps = sx(3);
+        mapsize = size(squeeze(x(:, :, 1, 1)));
+    end
+    
     for l = 1 : numel(net.layers)   %  layer
         if strcmp(net.layers{l}.type, 's')
             mapsize = mapsize / net.layers{l}.scale;

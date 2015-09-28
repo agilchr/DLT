@@ -1,5 +1,5 @@
 function net = cnntrain(net, x, y, opts)
-    m = size(x, 3);
+    sx = size(x); m = sx(end);
     numbatches = m / opts.batchsize;
     if rem(numbatches, 1) ~= 0
         error('numbatches not integer');
@@ -10,7 +10,11 @@ function net = cnntrain(net, x, y, opts)
         tic;
         kk = randperm(m);
         for l = 1 : numbatches
-            batch_x = x(:, :, kk((l - 1) * opts.batchsize + 1 : l * opts.batchsize));
+            if numel(sx) == 3
+                batch_x = x(:, :, kk((l - 1) * opts.batchsize + 1 : l * opts.batchsize));
+            else
+                batch_x = x(:, :, :, kk((l - 1) * opts.batchsize + 1 : l * opts.batchsize));
+            end
             batch_y = y(:,    kk((l - 1) * opts.batchsize + 1 : l * opts.batchsize));
 
             net = cnnff(net, batch_x);

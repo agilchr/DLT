@@ -1,7 +1,15 @@
 function net = cnnff(net, x)
     n = numel(net.layers);
-    net.layers{1}.a{1} = x;
-    inputmaps = 1;
+    sx = size(x);
+    if numel(sx) == 3 % black and white images
+        inputmaps = 1;
+        net.layers{1}.a{1} = x;
+    else % color or sliced 3D
+        inputmaps = sx(3);
+        for i = 1 : inputmaps % split colors/slices
+            net.layers{1}.a{i} = squeeze(x(:,:,i,:));
+        end
+    end
 
     for l = 2 : n   %  for each layer
         if strcmp(net.layers{l}.type, 'c')
