@@ -19,14 +19,20 @@ function net = cnnsetup(net, x, y)
         end
         if strcmp(net.layers{l}.type, 'r') % ReLU layer
             net.layers{l}.scale = 1;
-            net.layers{l}.outputmaps = net.layers{l-1}.outputmaps
+            net.layers{l}.outputmaps = net.layers{l-1}.outputmaps;
             for j = 1 : inputmaps
                 net.layers{l}.b{j} = 0;
             end
         end
         if strcmp(net.layers{l}.type, 'c')
             net.layers{l}.scale = 1;
-            mapsize = mapsize - net.layers{l}.kernelsize + 1;
+            if isfield(net.layers{l}, 'padded') && net.layers{l}.padded
+                net.layers{l}.convtype = 'full';
+                mapsize = mapsize + net.layers{l}.kernelsize - 1;
+            else
+                net.layers{l}.convtype = 'valid';
+                mapsize = mapsize - net.layers{l}.kernelsize + 1;
+            end
             fan_out = net.layers{l}.outputmaps * net.layers{l}.kernelsize ^ 2;
             for j = 1 : net.layers{l}.outputmaps  %  output map
                 fan_in = inputmaps * net.layers{l}.kernelsize ^ 2;

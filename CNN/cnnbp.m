@@ -49,7 +49,15 @@ function net = cnnbp(net, y)
         if strcmp(net.layers{l}.type, 'c')
             for j = 1 : numel(net.layers{l}.a)
                 for i = 1 : numel(net.layers{l - 1}.a)
-                    net.layers{l}.dk{i}{j} = convn(flipall(net.layers{l - 1}.a{i}), net.layers{l}.d{j}, 'valid') / size(net.layers{l}.d{j}, 3);
+                    if isfield(net.layers{l}, 'padded') && net.layers{l}.padded
+                        net.layers{l}.dk{i}{j} = convn(net.layers{l}.d{j}, ...
+                                                       flipall(net.layers{l - 1}.a{i}), 'valid') ...
+                            / size(net.layers{l}.d{j}, 3);
+                    else
+                        net.layers{l}.dk{i}{j} = convn(flipall(net.layers{l - 1}.a{i}), ...
+                                                       net.layers{l}.d{j}, 'valid') ...
+                            / size(net.layers{l}.d{j}, 3);
+                    end
                 end
                 net.layers{l}.db{j} = sum(net.layers{l}.d{j}(:)) / size(net.layers{l}.d{j}, 3);
             end

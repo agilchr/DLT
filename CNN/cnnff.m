@@ -16,10 +16,16 @@ function net = cnnff(net, x)
             %  !!below can probably be handled by insane matrix operations
             for j = 1 : net.layers{l}.outputmaps   %  for each output map
                 %  create temp output map
-                z = zeros(size(net.layers{l - 1}.a{1}) - [net.layers{l}.kernelsize - 1 net.layers{l}.kernelsize - 1 0]);
+                if isfield(net.layers{l}, 'padded') &&  net.layers{l}.padded
+                    z = zeros(size(net.layers{l - 1}.a{1}) + ...
+                          [net.layers{l}.kernelsize - 1 net.layers{l}.kernelsize - 1 0]);
+                else
+                    z = zeros(size(net.layers{l - 1}.a{1}) - ...
+                          [net.layers{l}.kernelsize - 1 net.layers{l}.kernelsize - 1 0]);
+                end
                 for i = 1 : inputmaps   %  for each input map
                     %  convolve with corresponding kernel and add to temp output map
-                    z = z + convn(net.layers{l - 1}.a{i}, net.layers{l}.k{i}{j}, 'valid');
+                    z = z + convn(net.layers{l - 1}.a{i}, net.layers{l}.k{i}{j}, net.layers{l}.convtype);
                 end
                 %  add bias, pass through nonlinearity
                 net.layers{l}.a{j} = sigm(z + net.layers{l}.b{j});
