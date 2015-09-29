@@ -10,13 +10,19 @@ function CNN_cifar_gray(num_epochs)
         fprintf('Converting batch %d\n',batch);
         load(['data_batch_',num2str(batch)]); % gives us data and labels
         new_x = reshape(double(data'), 32, 32, 3, size(data,1));
-        train_x = cat(3, train_x, squeeze(mean(new_x,3)));
+        mx = mean(new_x,3);
+        train_x = cat(4, train_x, cat(3, mx, cat(3, mx, mx)));
+        % train_x = cat(3, train_x, squeeze(mean(new_x,3)));
         train_y = cat(2, train_y, convert_labels(labels));
     end
     fprintf('Converting test batch\n');
     load('test_batch'); % also gives us data and labels
     test_x = reshape(data', 32, 32, 3, size(data,1));
-    test_x = squeeze(mean(test_x, 3));
+    % test_x = squeeze(mean(test_x, 3));
+    mx = mean(test_x, 3);
+    test_x = cat(3, mx, cat(3, mx, mx));
+    size(train_x)
+    size(test_x)
     test_y = convert_labels(labels);
         
 

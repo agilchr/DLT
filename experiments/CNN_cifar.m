@@ -37,13 +37,14 @@ function CNN_cifar(num_epochs)
     rand('state',0)
     cnn.layers = {
         struct('type', 'i') %input layer
-        struct('type', 'c', 'outputmaps', 6, 'kernelsize', 7) %convolution layer
-        struct('type', 'r')
+        struct('type', 'c', 'outputmaps', 15, 'kernelsize', 5, 'padded', true) %convolution layer
+        struct('type', 'r') %ReLU layer
         struct('type', 's', 'scale', 2) %sub sampling layer
-        struct('type', 'c', 'outputmaps', 12, 'kernelsize', 4) %convolution layer
+        struct('type', 'c', 'outputmaps', 10, 'kernelsize', 5, 'padded', false) %convolution layer
         struct('type', 'r')
         struct('type', 's', 'scale', 2) %subsampling layer
-        struct('type', 'c', 'outputmaps', 6, 'kernelsize', 4) %convolution layer
+        struct('type', 'c', 'outputmaps', 10, 'kernelsize', 4, 'padded', false) ...
+    %convolution layer
         struct('type', 'r')
         struct('type', 's', 'scale', 2) %subsampling layer
                  };
