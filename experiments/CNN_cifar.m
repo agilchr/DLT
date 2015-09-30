@@ -1,4 +1,4 @@
-function CNN_cifar(num_epochs)
+function cnn = CNN_cifar(num_epochs)
     
     if ~exist('num_epochs','var')
         num_epochs = 1;
@@ -60,6 +60,8 @@ function CNN_cifar(num_epochs)
     
     % let's look at the cnn
     cnn
+    
+    visualize(cnn.layers(2).a);
 
     %plot mean squared error
     figure; plot(cnn.rL);
